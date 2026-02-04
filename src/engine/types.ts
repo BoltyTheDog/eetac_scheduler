@@ -44,4 +44,5 @@ export type SchedulePreference = typeof SchedulePreference[keyof typeof Schedule
 export interface Schedule {
     sessions: HorariObj[];
     score: number;
+    hasOverlap: boolean;
 }

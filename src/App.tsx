@@ -40,6 +40,26 @@ function App() {
     return map;
   }, []);
 
+  // State for group popovers
+  const [openPopover, setOpenPopover] = useState<string | null>(null);
+
+  // Map subjects to their group details
+  const subjectGroups = useMemo(() => {
+    const map: Record<string, { grup: string, tipus: string }[]> = {};
+    (data as any).results.forEach((session: any) => {
+      const code = session.codi_assig;
+      if (!map[code]) map[code] = [];
+      if (!map[code].some(g => g.grup === session.grup)) {
+        map[code].push({ grup: session.grup, tipus: session.tipus });
+      }
+    });
+    // Sort groups
+    Object.keys(map).forEach(code => {
+      map[code].sort((a, b) => a.grup.localeCompare(b.grup));
+    });
+    return map;
+  }, []);
+
   const groupedSubjects = useMemo(() => {
     const subjects = [...filteredSubjects];
     if (sortMode === 'alpha') {
@@ -166,13 +186,37 @@ function App() {
               <h2 style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Seleccionadas</h2>
               <span className="swipe-hint" style={{ fontSize: '0.65rem', marginLeft: '0.5rem', opacity: 0.5, fontStyle: 'italic' }}>click para eliminar</span>
             </div>
-            <div style={{ minHeight: '40px', display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+            <div style={{ minHeight: '40px', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
               {selectedSubjects.length === 0 ? (
                 <div style={{ color: '#94a3b8', fontSize: '0.85rem', fontStyle: 'italic' }}>Ninguna asignatura seleccionada</div>
               ) : (
                 selectedSubjects.map(s => (
-                  <div key={s} className="selected-item" onClick={() => handleRemoveSubject(s)} style={{ marginBottom: 0, padding: '0.4rem 0.6rem', fontSize: '0.85rem' }}>
-                    <span>{s}</span>
+                  <div key={s} className="selected-item" style={{ marginBottom: 0, padding: '0.6rem 0.8rem', fontSize: '0.875rem' }}>
+                    <span
+                      className="selected-item-name"
+                      onClick={() => handleRemoveSubject(s)}
+                      style={{ fontWeight: '500' }}
+                    >
+                      {s}
+                    </span>
+                    <div
+                      className="selected-item-groups-btn"
+                      onMouseEnter={() => setOpenPopover(s)}
+                      onMouseLeave={() => setOpenPopover(null)}
+                      style={{ position: 'relative' }}
+                    >
+                      {subjectGroups[s]?.length || 0} {subjectGroups[s]?.length === 1 ? 'grupo' : 'grupos'}
+
+                      {openPopover === s && (
+                        <div className="groups-popover">
+                          {subjectGroups[s].map((g, i) => (
+                            <div key={i} className="groups-popover-item">
+                              Gr {g.grup} ({g.tipus})
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 ))
               )}
@@ -273,12 +317,16 @@ function App() {
         </aside>
 
         <section className="schedule-section" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', flex: 1, minHeight: 0 }}>
-          <div className="panel nav-panel" style={{ opacity: schedules.length > 0 ? 1 : 0.3, pointerEvents: schedules.length > 0 ? 'auto' : 'none' }}>
-            <div style={{ fontSize: '0.875rem', display: 'flex', alignItems: 'baseline' }}>
+          <div className="panel nav-panel" style={{
+            opacity: schedules.length > 0 || (selectedSubjects.length > 0 && !allowOverlapping) ? 1 : 0.3,
+            pointerEvents: schedules.length > 0 ? 'auto' : 'none'
+          }}>
+            <div style={{ fontSize: '0.875rem', display: 'flex', alignItems: 'baseline', flexWrap: 'wrap' }}>
               <span style={{ color: 'var(--text-dim)' }}>Horarios encontrados:</span> <strong style={{ color: 'var(--primary-color)', marginLeft: '0.25rem' }}>{schedules.length}</strong>
               <span className="swipe-hint">desliza para cambiar</span>
               {schedules.length > 0 && <span style={{ marginLeft: '1rem', opacity: 0.5, display: 'inline-block' }} className="hide-mobile">(Usa las flechas ← →)</span>}
             </div>
+
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <button
                 disabled={currentIndex === 0}
@@ -292,10 +340,10 @@ function App() {
                 {schedules.length > 0 ? `${currentIndex + 1} / ${schedules.length}` : '0 / 0'}
               </span>
               <button
-                disabled={currentIndex === 0 || currentIndex === schedules.length - 1}
+                disabled={schedules.length <= 1 || currentIndex === schedules.length - 1}
                 onClick={() => setCurrentIndex(prev => prev + 1)}
                 className="btn-toggle"
-                style={{ borderRadius: '0.375rem', padding: '0.4rem 0.8rem', opacity: (schedules.length === 0 || currentIndex === schedules.length - 1) ? 0.3 : 1 }}
+                style={{ borderRadius: '0.375rem', padding: '0.4rem 0.8rem', opacity: (schedules.length <= 1 || currentIndex === schedules.length - 1) ? 0.3 : 1 }}
               >
                 →
               </button>
@@ -303,7 +351,7 @@ function App() {
           </div>
           <div
             style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}
-            className="grid-container"
+            className={`grid-container ${(!currentSchedule || currentSchedule.hasOverlap || schedules.length === 0) && selectedSubjects.length > 0 ? 'warn-bg' : ''}`}
             onTouchStart={onTouchStart}
             onTouchEnd={onTouchEnd}
           >

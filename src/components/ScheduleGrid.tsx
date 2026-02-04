@@ -40,17 +40,17 @@ export const ScheduleGrid: React.FC<Props> = ({ schedule }) => {
     };
 
     return (
-        <div className="panel" style={{ flex: 1, overflowX: 'auto', padding: '0', display: 'flex' }}>
+        <div className="panel" style={{ flex: 1, padding: '0', display: 'flex', border: 'none', background: 'transparent' }}>
             <div style={{
                 display: 'grid',
-                gridTemplateColumns: '70px repeat(5, 1fr)',
+                gridTemplateColumns: 'var(--grid-time-width) repeat(5, 1fr)',
                 gridTemplateRows: '50px repeat(14, 1fr)',
-                minWidth: '850px', // Slightly wider for better breathing room
+                width: '100%',
                 flex: 1,
                 borderLeft: '1px solid var(--border-color)',
                 borderBottom: '1px solid var(--border-color)'
             }}>
-                <div style={{ background: 'var(--bg-color)', borderRight: '1px solid var(--border-color)', borderTop: '1px solid var(--border-color)' }} />
+                <div style={{ background: 'transparent', borderRight: '1px solid var(--border-color)', borderTop: '1px solid var(--border-color)' }} />
                 {DAYS.map(day => (
                     <div key={day} style={{
                         textAlign: 'center',
@@ -59,8 +59,8 @@ export const ScheduleGrid: React.FC<Props> = ({ schedule }) => {
                         justifyContent: 'center',
                         fontWeight: '600',
                         color: 'var(--text-dim)',
-                        background: 'var(--bg-color)',
-                        fontSize: '0.875rem',
+                        background: 'transparent',
+                        fontSize: 'var(--grid-header-font)',
                         borderRight: '1px solid var(--border-color)',
                         borderTop: '1px solid var(--border-color)'
                     }}>
@@ -78,7 +78,7 @@ export const ScheduleGrid: React.FC<Props> = ({ schedule }) => {
                                 color: 'var(--text-dim)',
                                 fontSize: '0.75rem',
                                 textAlign: 'right',
-                                background: 'var(--bg-color)',
+                                background: 'transparent',
                                 fontWeight: '500',
                                 borderRight: '1px solid var(--border-color)',
                                 borderTop: '1px solid var(--border-color)',
@@ -91,7 +91,7 @@ export const ScheduleGrid: React.FC<Props> = ({ schedule }) => {
                         {DAYS.map((_, dayIndex) => (
                             <div key={dayIndex}
                                 style={{
-                                    background: 'var(--bg-color)',
+                                    background: 'transparent',
                                     height: '100%',
                                     boxSizing: 'border-box',
                                     borderRight: '1px solid var(--border-color)',

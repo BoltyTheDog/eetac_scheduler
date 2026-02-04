@@ -72,10 +72,24 @@ export class Scheduler {
         }
 
         // 3. Score and Sort
-        const schedules: Schedule[] = combinations.map(sessions => ({
-            sessions,
-            score: this.calculateScore(sessions, preference)
-        }));
+        const schedules: Schedule[] = combinations.map(sessions => {
+            let hasOverlap = false;
+            for (let i = 0; i < sessions.length; i++) {
+                for (let j = i + 1; j < sessions.length; j++) {
+                    if (this.sessionsCollide(sessions[i], sessions[j])) {
+                        hasOverlap = true;
+                        break;
+                    }
+                }
+                if (hasOverlap) break;
+            }
+
+            return {
+                sessions,
+                score: this.calculateScore(sessions, preference),
+                hasOverlap
+            };
+        });
 
         return schedules.sort((a, b) => b.score - a.score);
     }
