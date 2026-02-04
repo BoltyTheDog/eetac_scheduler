@@ -40,7 +40,7 @@ export const ScheduleGrid: React.FC<Props> = ({ schedule }) => {
     };
 
     return (
-        <div className="panel" style={{ flex: 1, overflow: 'hidden', padding: '0', display: 'flex' }}>
+        <div className="panel" style={{ flex: 1, overflowX: 'auto', padding: '0', display: 'flex' }}>
             <div style={{
                 display: 'grid',
                 gridTemplateColumns: '70px repeat(5, 1fr)',
