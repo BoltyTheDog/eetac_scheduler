@@ -5,7 +5,7 @@ interface Props {
     schedule: Schedule;
 }
 
-const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+const DAYS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
 const HOURS = Array.from({ length: 14 }, (_, i) => i + 8); // 8:00 to 21:00
 
 const COLORS = [
@@ -45,7 +45,7 @@ export const ScheduleGrid: React.FC<Props> = ({ schedule }) => {
                 display: 'grid',
                 gridTemplateColumns: '70px repeat(5, 1fr)',
                 gridTemplateRows: '50px repeat(14, 1fr)',
-                minWidth: '800px',
+                minWidth: '850px', // Slightly wider for better breathing room
                 flex: 1,
                 borderLeft: '1px solid var(--border-color)',
                 borderBottom: '1px solid var(--border-color)'
@@ -174,7 +174,7 @@ export const ScheduleGrid: React.FC<Props> = ({ schedule }) => {
                                     <div style={{ fontWeight: '700', fontSize: '0.8rem', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{session.code}</div>
                                     <div style={{ fontSize: '0.7rem', opacity: 0.9, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>Gr {session.group} ({session.type})</div>
                                     <div style={{ fontSize: '0.6rem', opacity: 0.8, marginTop: 'auto', lineHeight: '1.2' }}>
-                                        W: {formatWeeks(session.weeks)}
+                                        Set: {formatWeeks(session.weeks)}
                                     </div>
                                 </div>
                             );

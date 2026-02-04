@@ -1,5 +1,5 @@
 {
-  "count": 372,
+  "count": 391,
   "results": [
     {
       "codi_assig": "MO",
@@ -128,6 +128,29 @@
       ]
     },
     {
+      "codi_assig": "ES",
+      "grup": "4ES2",
+      "dia_setmana": 1,
+      "inici": "8:00",
+      "durada": 2,
+      "tipus": "P",
+      "setmanes": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        9,
+        10,
+        11,
+        13,
+        14,
+        15,
+        16
+      ]
+    },
+    {
       "codi_assig": "ET",
       "grup": "1T1",
       "dia_setmana": 1,
@@ -222,6 +245,23 @@
       ]
     },
     {
+      "codi_assig": "ALA",
+      "grup": "2T1",
+      "dia_setmana": 1,
+      "inici": "10:00",
+      "durada": 1,
+      "tipus": "T",
+      "setmanes": [
+        1,
+        3,
+        5,
+        9,
+        11,
+        14,
+        16
+      ]
+    },
+    {
       "codi_assig": "MO",
       "grup": "4ES2",
       "dia_setmana": 1,
@@ -245,6 +285,7 @@
       "setmanes": [
         2,
         4,
+        6,
         10,
         13,
         15
@@ -291,6 +332,29 @@
     {
       "codi_assig": "EG",
       "grup": "2A32",
+      "dia_setmana": 1,
+      "inici": "10:00",
+      "durada": 2,
+      "tipus": "P",
+      "setmanes": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        9,
+        10,
+        11,
+        13,
+        14,
+        15,
+        16
+      ]
+    },
+    {
+      "codi_assig": "ES",
+      "grup": "4ES1",
       "dia_setmana": 1,
       "inici": "10:00",
       "durada": 2,
@@ -480,7 +544,29 @@
       "durada": 2,
       "tipus": "T",
       "setmanes": [
-        1
+        1,
+        3,
+        5,
+        9,
+        11,
+        14,
+        16
+      ]
+    },
+    {
+      "codi_assig": "ELECTRO",
+      "grup": "5A1",
+      "dia_setmana": 1,
+      "inici": "12:00",
+      "durada": 2,
+      "tipus": "T",
+      "setmanes": [
+        2,
+        4,
+        6,
+        10,
+        13,
+        15
       ]
     },
     {
@@ -657,6 +743,23 @@
         3,
         9,
         10,
+        11,
+        14,
+        16
+      ]
+    },
+    {
+      "codi_assig": "ALA",
+      "grup": "2T2",
+      "dia_setmana": 1,
+      "inici": "15:00",
+      "durada": 1,
+      "tipus": "T",
+      "setmanes": [
+        1,
+        3,
+        5,
+        9,
         11,
         14,
         16
@@ -1811,6 +1914,29 @@
       ]
     },
     {
+      "codi_assig": "ELECTRO",
+      "grup": "5A12",
+      "dia_setmana": 2,
+      "inici": "10:00",
+      "durada": 2,
+      "tipus": "P",
+      "setmanes": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        9,
+        10,
+        12,
+        13,
+        14,
+        15,
+        16
+      ]
+    },
+    {
       "codi_assig": "MGTA",
       "grup": "5A11",
       "dia_setmana": 2,
@@ -1979,6 +2105,52 @@
       "inici": "12:00",
       "durada": 2,
       "tipus": "P",
+      "setmanes": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        9,
+        10,
+        12,
+        13,
+        14,
+        15,
+        16
+      ]
+    },
+    {
+      "codi_assig": "ELECTRO",
+      "grup": "5A11",
+      "dia_setmana": 2,
+      "inici": "12:00",
+      "durada": 2,
+      "tipus": "P",
+      "setmanes": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        9,
+        10,
+        12,
+        13,
+        14,
+        15,
+        16
+      ]
+    },
+    {
+      "codi_assig": "ES",
+      "grup": "4ES",
+      "dia_setmana": 2,
+      "inici": "12:00",
+      "durada": 2,
+      "tipus": "T",
       "setmanes": [
         1,
         2,
@@ -2238,6 +2410,29 @@
       ]
     },
     {
+      "codi_assig": "ELECTRO",
+      "grup": "5A13",
+      "dia_setmana": 2,
+      "inici": "15:00",
+      "durada": 2,
+      "tipus": "P",
+      "setmanes": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        9,
+        10,
+        12,
+        13,
+        14,
+        15,
+        16
+      ]
+    },
+    {
       "codi_assig": "EMP",
       "grup": "1A2",
       "dia_setmana": 2,
@@ -2313,6 +2508,29 @@
       "inici": "15:00",
       "durada": 3,
       "tipus": "T",
+      "setmanes": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        9,
+        10,
+        12,
+        13,
+        14,
+        15,
+        16
+      ]
+    },
+    {
+      "codi_assig": "QUI-S",
+      "grup": "2ES3",
+      "dia_setmana": 2,
+      "inici": "15:00",
+      "durada": 2,
+      "tipus": "P",
       "setmanes": [
         1,
         2,
@@ -2954,13 +3172,12 @@
       "durada": 2,
       "tipus": "P",
       "setmanes": [
-        1,
-        3,
+        2,
+        4,
         5,
-        9,
         11,
         14,
-        16
+        15
       ]
     },
     {
@@ -3146,9 +3363,7 @@
         1,
         2,
         3,
-        4,
         5,
-        9,
         10,
         13,
         14,
@@ -3181,13 +3396,12 @@
       "durada": 2,
       "tipus": "P",
       "setmanes": [
-        1,
-        3,
+        2,
+        4,
         5,
-        9,
         11,
         14,
-        16
+        15
       ]
     },
     {
@@ -3202,6 +3416,30 @@
         10,
         11,
         12,
+        14,
+        15,
+        16
+      ]
+    },
+    {
+      "codi_assig": "ALA",
+      "grup": "2T1",
+      "dia_setmana": 3,
+      "inici": "12:00",
+      "durada": 2,
+      "tipus": "T",
+      "setmanes": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        9,
+        10,
+        11,
+        12,
+        13,
         14,
         15,
         16
@@ -3725,10 +3963,8 @@
       "setmanes": [
         0,
         1,
-        2,
-        4,
-        9,
-        10,
+        3,
+        5,
         13,
         14,
         15,
@@ -3743,13 +3979,12 @@
       "durada": 2,
       "tipus": "P",
       "setmanes": [
-        1,
-        3,
+        2,
+        4,
         5,
-        9,
         11,
         14,
-        16
+        15
       ]
     },
     {
@@ -3782,6 +4017,30 @@
       "dia_setmana": 3,
       "inici": "17:00",
       "durada": 1,
+      "tipus": "T",
+      "setmanes": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ]
+    },
+    {
+      "codi_assig": "ALA",
+      "grup": "2T2",
+      "dia_setmana": 3,
+      "inici": "18:00",
+      "durada": 2,
       "tipus": "T",
       "setmanes": [
         0,
@@ -4325,6 +4584,39 @@
       ]
     },
     {
+      "codi_assig": "ELECTRO",
+      "grup": "5A1",
+      "dia_setmana": 4,
+      "inici": "10:00",
+      "durada": 2,
+      "tipus": "T",
+      "setmanes": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        9,
+        10,
+        11,
+        13,
+        14,
+        15
+      ]
+    },
+    {
+      "codi_assig": "ELECTRO",
+      "grup": "5A1",
+      "dia_setmana": 1,
+      "inici": "10:00",
+      "durada": 2,
+      "tipus": "T",
+      "setmanes": [
+        12
+      ]
+    },
+    {
       "codi_assig": "FT",
       "grup": "2T11",
       "dia_setmana": 4,
@@ -4816,6 +5108,27 @@
         3,
         4,
         5
+      ]
+    },
+    {
+      "codi_assig": "GNSS",
+      "grup": "MAST",
+      "dia_setmana": 4,
+      "inici": "15:00",
+      "durada": 4,
+      "tipus": "T",
+      "setmanes": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        9,
+        10,
+        11,
+        13
       ]
     },
     {
@@ -5662,7 +5975,6 @@
         2,
         3,
         9,
-        11,
         15
       ]
     },
@@ -5677,6 +5989,7 @@
         4,
         5,
         10,
+        11,
         13,
         14
       ]
@@ -6478,6 +6791,39 @@
       ]
     },
     {
+      "codi_assig": "ALA",
+      "grup": "2T1",
+      "dia_setmana": 5,
+      "inici": "12:00",
+      "durada": 2,
+      "tipus": "T",
+      "setmanes": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        9,
+        10,
+        12,
+        13,
+        14,
+        15
+      ]
+    },
+    {
+      "codi_assig": "ALA",
+      "grup": "2T1",
+      "dia_setmana": 2,
+      "inici": "12:00",
+      "durada": 2,
+      "tipus": "T",
+      "setmanes": [
+        11
+      ]
+    },
+    {
       "codi_assig": "MO",
       "grup": "4ES",
       "dia_setmana": 5,
@@ -6584,6 +6930,39 @@
       "setmanes": [
         14,
         15
+      ]
+    },
+    {
+      "codi_assig": "ALA",
+      "grup": "2T2",
+      "dia_setmana": 5,
+      "inici": "15:00",
+      "durada": 2,
+      "tipus": "T",
+      "setmanes": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        9,
+        10,
+        12,
+        13,
+        14,
+        15
+      ]
+    },
+    {
+      "codi_assig": "ALA",
+      "grup": "2T2",
+      "dia_setmana": 2,
+      "inici": "15:00",
+      "durada": 2,
+      "tipus": "T",
+      "setmanes": [
+        11
       ]
     },
     {
