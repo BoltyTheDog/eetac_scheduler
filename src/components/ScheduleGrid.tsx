@@ -12,7 +12,6 @@ const HOURS = Array.from({ length: 14 }, (_, i) => i + 8); // 8:00 to 21:00
 
 export const ScheduleGrid: React.FC<Props> = ({ schedule, subjectColorMap }) => {
     const [selectedSession, setSelectedSession] = useState<HorariObj | null>(null);
-    const [initialRect, setInitialRect] = useState<DOMRect | null>(null);
     const [isExpanded, setIsExpanded] = useState(false);
 
     const getSubjectColor = (code: string) => {
@@ -190,13 +189,10 @@ export const ScheduleGrid: React.FC<Props> = ({ schedule, subjectColorMap }) => 
                                         transition: 'transform 0.2s ease',
                                         transform: selectedSession === session ? 'scale(0.95)' : 'none'
                                     }}
-                                    onClick={(e) => {
+                                    onClick={() => {
                                         if (isMobile) {
-                                            const rect = e.currentTarget.getBoundingClientRect();
-                                            setInitialRect(rect);
                                             setSelectedSession(session);
                                             setIsExpanded(false);
-                                            // Small delay to allow the proxy to mount at initial position
                                             setTimeout(() => setIsExpanded(true), 10);
                                         }
                                     }}
@@ -244,7 +240,7 @@ export const ScheduleGrid: React.FC<Props> = ({ schedule, subjectColorMap }) => 
                     });
                 })}
             </div>
-            {isMobile && selectedSession && initialRect && createPortal(
+            {isMobile && selectedSession && createPortal(
                 <div
                     style={{
                         position: 'fixed',
@@ -252,46 +248,37 @@ export const ScheduleGrid: React.FC<Props> = ({ schedule, subjectColorMap }) => 
                         left: 0,
                         right: 0,
                         bottom: 0,
-                        background: isExpanded ? 'rgba(0,0,0,0.6)' : 'rgba(0,0,0,0)',
-                        backdropFilter: isExpanded ? 'blur(10px)' : 'none',
+                        background: 'rgba(0,0,0,0.6)',
+                        backdropFilter: 'blur(10px)',
                         zIndex: 10000,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                        opacity: isExpanded ? 1 : 0,
+                        transition: 'opacity 0.2s ease-out',
                         cursor: 'pointer'
                     }}
                     onClick={() => {
                         setIsExpanded(false);
                         setTimeout(() => {
                             setSelectedSession(null);
-                            setInitialRect(null);
-                        }, 300);
+                        }, 200);
                     }}
                 >
                     <div
                         style={{
-                            position: 'fixed',
                             background: getSubjectColor(selectedSession.code),
                             color: 'white',
-                            borderRadius: isExpanded ? '1.2rem' : '4px',
-                            boxShadow: isExpanded ? '0 25px 50px -12px rgba(0,0,0,0.5)' : 'none',
+                            borderRadius: '1.2rem',
+                            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)',
                             border: '1px solid rgba(255,255,255,0.2)',
-                            padding: isExpanded ? '1.5rem' : '0.2rem 0.4rem',
+                            padding: '1.5rem',
                             display: 'flex',
                             flexDirection: 'column',
                             gap: '1rem',
-                            overflow: 'hidden',
-                            boxSizing: 'border-box',
-
-                            // Morphing properties
-                            top: isExpanded ? '50%' : `${initialRect.top}px`,
-                            left: isExpanded ? '50%' : `${initialRect.left}px`,
-                            width: isExpanded ? 'min(85vw, 340px)' : `${initialRect.width}px`,
-                            height: isExpanded ? 'auto' : `${initialRect.height}px`,
-                            transform: isExpanded ? 'translate(-50%, -50%)' : 'none',
-                            transformOrigin: 'top left',
-                            transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                            width: 'min(85vw, 340px)',
+                            transform: isExpanded ? 'translateY(0)' : 'translateY(20px)',
+                            transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
                             zIndex: 10001
                         }}
                         onClick={e => e.stopPropagation()}
@@ -309,13 +296,7 @@ export const ScheduleGrid: React.FC<Props> = ({ schedule, subjectColorMap }) => 
                         <div style={{
                             display: 'flex',
                             flexDirection: 'column',
-                            gap: '0.8rem',
-                            opacity: isExpanded ? 1 : 0,
-                            transform: isExpanded ? 'translateY(0)' : 'translateY(20px)',
-                            transition: 'all 0.3s ease 0.1s',
-                            pointerEvents: isExpanded ? 'auto' : 'none',
-                            height: isExpanded ? 'auto' : '0',
-                            overflow: 'hidden'
+                            gap: '0.8rem'
                         }}>
                             <div style={{ fontSize: '1.2rem', fontWeight: '600' }}>Grupo {selectedSession.group}</div>
                             <div style={{ fontSize: '1rem', opacity: 0.9 }}>

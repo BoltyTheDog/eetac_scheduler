@@ -172,7 +172,9 @@ function App() {
       </a>
 
       <header className="header">
-        <img src={logo} alt="Logo EETAC" className="header-logo" />
+        <a href="https://eetac.upc.edu/en" target="_blank" rel="noopener noreferrer">
+          <img src={logo} alt="Logo EETAC" className="header-logo" />
+        </a>
         <h1 className="header-title">Generador de Horarios</h1>
       </header>
 
@@ -406,6 +408,11 @@ function App() {
           </div>
         </section>
       </main>
+
+      <footer className="footer-disclaimer">
+        <strong>Disclaimer:</strong> la precisión de estos datos se atribuyen a la precisión de los datos disponibles en SIA, usar con cabeza
+      </footer>
+
       {openPopover && (
         <div
           className="groups-popover"
