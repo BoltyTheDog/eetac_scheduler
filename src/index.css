@@ -10,17 +10,17 @@
   align-items: center;
   justify-content: center;
   gap: 2rem;
-  padding: 0.75rem 0;
+  padding: 0.5rem 0;
 }
 
 .header-logo {
-  height: 80px;
+  height: 60px;
   width: auto;
   display: block;
 }
 
 .header-title {
-  font-size: 2.5rem;
+  font-size: 2rem;
   margin: 0;
   line-height: 1;
   color: #334155;
@@ -121,6 +121,9 @@ body {
   border: 1px solid var(--border-color);
   border-radius: 0.5rem;
   padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 h1 {
@@ -135,6 +138,21 @@ h1 {
   grid-template-columns: 320px 1fr;
   gap: 2rem;
   width: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.panel-subjects {
+  flex: 1;
+}
+
+.subjects-list {
+  flex: 1;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 0.375rem;
+  background: var(--bg-color);
 }
 
 @media (max-width: 1024px) {
@@ -174,7 +192,9 @@ h1 {
   }
 
   .subjects-list {
-    max-height: 400px;
+    max-height: 450px;
+    overflow-y: auto;
+    flex: 1;
     border: 1px solid var(--border-color);
     border-radius: 0.375rem;
     background: var(--bg-color);
@@ -184,9 +204,43 @@ h1 {
 .layout-sidebar {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1rem;
   height: 100%;
   min-height: 0;
+  z-index: 10;
+  position: relative;
+}
+
+.controls-row {
+  display: flex;
+  gap: 0.75rem;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.controls-row .panel {
+  padding: 0.75rem 0.5rem;
+  min-width: 0;
+  /* Critical for flex shrinking */
+}
+
+.controls-row h2 {
+  margin-bottom: 0.5rem !important;
+  font-size: 0.75rem !important;
+}
+
+@media (max-width: 1024px) {
+  .controls-row {
+    flex-direction: column;
+  }
+
+  .controls-row .panel {
+    flex: none !important;
+  }
+
+  .controls-row h2 {
+    font-size: 0.9rem !important;
+  }
 }
 
 .swipe-hint {
@@ -205,7 +259,7 @@ h1 {
 }
 
 .btn-toggle {
-  padding: 0.625rem 1rem;
+  padding: 0.5rem 0.1rem;
   background: transparent;
   border: 1px solid var(--border-color);
   color: var(--text-dim);
@@ -213,6 +267,9 @@ h1 {
   transition: all 0.2s;
   font-weight: 500;
   flex: 1;
+  text-align: center;
+  font-size: 0.65rem !important;
+  letter-spacing: -0.02em;
 }
 
 .btn-toggle:first-child {
@@ -229,17 +286,35 @@ h1 {
   color: white;
 }
 
+@media (max-width: 1024px) {
+  .btn-toggle {
+    font-size: 0.9rem !important;
+    padding: 0.4rem 0.2rem;
+  }
+}
+
+.selected-list-container {
+  overflow-y: auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding-right: 4px;
+}
+
 .selected-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 0.75rem;
+  padding: 0.35rem 0.6rem;
   border-radius: 0.375rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.3rem;
+  /* Tighter */
   transition: all 0.2s;
   border: 1px solid var(--border-color);
   background: var(--surface-color);
   position: relative;
+  font-size: 0.8rem;
 }
 
 .selected-item-name {
@@ -273,20 +348,18 @@ h1 {
 }
 
 .groups-popover {
-  position: absolute;
-  top: 100%;
-  right: 0;
+  position: fixed;
   background: #1e293b;
   border: 1px solid #334155;
   border-radius: 0.5rem;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
   padding: 0.75rem;
-  z-index: 1100;
+  z-index: 2000;
+  /* Above everything */
   min-width: 130px;
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-  margin-top: 4px;
   pointer-events: none;
 }
 
@@ -310,13 +383,19 @@ h1 {
   width: 100%;
   background-color: var(--surface-color);
   transition: background-color 0.2s ease-in-out;
+  flex: 1;
+  /* Fill the section */
+  min-height: 0;
+  z-index: 1;
+  position: relative;
 }
 
 .nav-panel {
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.5rem;
+  padding: 0.5rem 1.25rem;
 }
 
 @media (max-width: 768px) {
@@ -338,25 +417,27 @@ h1 {
   }
 }
 
-/* Animations */
-@keyframes fadeIn {
+/* Animations & Transitions */
+@keyframes scheduleFadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0);
   }
+}
+
+.animate-subject-fade {
+  animation: scheduleFadeIn 0.1s ease-out forwards;
+}
+
+.schedule-block {
+  transition: opacity 0.1s ease-in-out;
 }
 
 .warn-bg {
   background-color: rgba(248, 113, 113, 0.08) !important;
-}
-
-.animate-fade {
-  animation: fadeIn 0.4s ease-out forwards;
 }
 
 .github-link {

@@ -57,7 +57,7 @@ function App() {
   }, []);
 
   // State for group popovers
-  const [openPopover, setOpenPopover] = useState<string | null>(null);
+  const [openPopover, setOpenPopover] = useState<{ code: string, top: number, left: number } | null>(null);
 
   // Map subjects to their group details
   const subjectGroups = useMemo(() => {
@@ -176,62 +176,76 @@ function App() {
         <h1 className="header-title">Generador de Horarios</h1>
       </header>
 
-      <main className="layout" style={{ flex: 1, minHeight: 0 }}>
+      <main className="layout">
         <aside className="layout-sidebar">
-          <div className="panel panel-priority">
-            <h2 style={{ marginBottom: '1rem', fontSize: '0.85rem', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Preferencia</h2>
-            <div style={{ display: 'flex' }}>
-              {(['Mañana', 'Tarde', 'Indiferente'] as const).map(p => {
-                const preferenceMap = { 'Mañana': SchedulePreference.Morning, 'Tarde': SchedulePreference.Afternoon, 'Indiferente': SchedulePreference.DontCare };
-                return (
-                  <button
-                    key={p}
-                    className={`btn-toggle ${preference === preferenceMap[p] ? 'active' : ''}`}
-                    onClick={() => setPreference(preferenceMap[p])}
-                    style={{ fontSize: '0.85rem' }}
-                  >
-                    {p}
-                  </button>
-                );
-              })}
+          <div className="controls-row">
+            <div className="panel panel-priority" style={{ flex: '0 0 60%' }}>
+              <h2>Preferencia</h2>
+              <div style={{ display: 'flex' }}>
+                {(['Mañana', 'Tarde', 'Indiferente'] as const).map(p => {
+                  const preferenceMap = { 'Mañana': SchedulePreference.Morning, 'Tarde': SchedulePreference.Afternoon, 'Indiferente': SchedulePreference.DontCare };
+                  return (
+                    <button
+                      key={p}
+                      className={`btn-toggle ${preference === preferenceMap[p] ? 'active' : ''}`}
+                      onClick={() => setPreference(preferenceMap[p])}
+                    >
+                      {p}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="panel panel-overlapping" style={{ flex: '1' }}>
+              <h2>Solapamientos</h2>
+              <div style={{ display: 'flex' }}>
+                <button
+                  className={`btn-toggle ${!allowOverlapping ? 'active' : ''}`}
+                  onClick={() => setAllowOverlapping(false)}
+                >
+                  Estricto
+                </button>
+                <button
+                  className={`btn-toggle ${allowOverlapping ? 'active' : ''}`}
+                  onClick={() => setAllowOverlapping(true)}
+                >
+                  Permitir
+                </button>
+              </div>
             </div>
           </div>
 
-          <div className="panel panel-selected">
-            <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '1rem' }}>
+          <div className="panel panel-selected" style={{ flex: '0 1 auto', display: 'flex', flexDirection: 'column', minHeight: 0, maxHeight: '35%' }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '0.75rem' }}>
               <h2 style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Seleccionadas</h2>
               <span className="swipe-hint" style={{ fontSize: '0.65rem', marginLeft: '0.5rem', opacity: 0.5, fontStyle: 'italic' }}>click para eliminar</span>
             </div>
-            <div style={{ minHeight: '40px', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+            <div className="selected-list-container">
               {selectedSubjects.length === 0 ? (
                 <div style={{ color: '#94a3b8', fontSize: '0.85rem', fontStyle: 'italic' }}>Ninguna asignatura seleccionada</div>
               ) : (
                 selectedSubjects.map(s => (
-                  <div key={s} className="selected-item" style={{ marginBottom: 0, padding: '0.6rem 0.8rem', fontSize: '0.875rem' }}>
+                  <div key={s} className="selected-item">
                     <span
                       className="selected-item-name"
                       onClick={() => handleRemoveSubject(s)}
-                      style={{ fontWeight: '500' }}
                     >
                       {s}
                     </span>
                     <div
                       className="selected-item-groups-btn"
-                      onMouseEnter={() => setOpenPopover(s)}
+                      onMouseEnter={(e) => {
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        setOpenPopover({
+                          code: s,
+                          top: rect.top,
+                          left: rect.left
+                        });
+                      }}
                       onMouseLeave={() => setOpenPopover(null)}
-                      style={{ position: 'relative' }}
                     >
                       {subjectGroups[s]?.length || 0} {subjectGroups[s]?.length === 1 ? 'grupo' : 'grupos'}
-
-                      {openPopover === s && (
-                        <div className="groups-popover">
-                          {subjectGroups[s].map((g, i) => (
-                            <div key={i} className="groups-popover-item">
-                              Gr {g.grup} ({g.tipus})
-                            </div>
-                          ))}
-                        </div>
-                      )}
                     </div>
                   </div>
                 ))
@@ -239,25 +253,6 @@ function App() {
             </div>
           </div>
 
-          <div className="panel panel-overlapping">
-            <h2 style={{ marginBottom: '1rem', fontSize: '0.85rem', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Solapamientos</h2>
-            <div style={{ display: 'flex' }}>
-              <button
-                className={`btn-toggle ${!allowOverlapping ? 'active' : ''}`}
-                onClick={() => setAllowOverlapping(false)}
-                style={{ fontSize: '0.85rem' }}
-              >
-                Estricto
-              </button>
-              <button
-                className={`btn-toggle ${allowOverlapping ? 'active' : ''}`}
-                onClick={() => setAllowOverlapping(true)}
-                style={{ fontSize: '0.85rem' }}
-              >
-                Permitir
-              </button>
-            </div>
-          </div>
 
           <div className="panel panel-subjects" style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
@@ -332,15 +327,15 @@ function App() {
           </div>
         </aside>
 
-        <section className="schedule-section" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', flex: 1, minHeight: 0 }}>
+        <section className="schedule-section" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', flex: 1, minHeight: 0 }}>
           <div className="panel nav-panel" style={{
             opacity: schedules.length > 0 || (selectedSubjects.length > 0 && !allowOverlapping) ? 1 : 0.3,
             pointerEvents: schedules.length > 0 ? 'auto' : 'none'
           }}>
-            <div style={{ fontSize: '0.875rem', display: 'flex', alignItems: 'baseline', flexWrap: 'wrap' }}>
-              <span style={{ color: 'var(--text-dim)' }}>Horarios encontrados:</span> <strong style={{ color: 'var(--primary-color)', marginLeft: '0.25rem' }}>{schedules.length}</strong>
-              <span className="swipe-hint">desliza para cambiar</span>
-              {schedules.length > 0 && <span style={{ marginLeft: '1rem', opacity: 0.5, display: 'inline-block' }} className="hide-mobile">(Usa las flechas ← →)</span>}
+            <div style={{ fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
+              <span style={{ color: 'var(--text-dim)' }}>Horarios:</span>
+              <strong style={{ color: 'var(--primary-color)', marginLeft: '0.4rem' }}>{schedules.length}</strong>
+              <span className="swipe-hint" style={{ fontSize: '0.7rem', opacity: 0.5, marginLeft: '1rem' }}>Desliza para cambiar</span>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -378,6 +373,22 @@ function App() {
           </div>
         </section>
       </main>
+      {openPopover && (
+        <div
+          className="groups-popover"
+          style={{
+            top: `${openPopover.top}px`,
+            left: `${openPopover.left - 10}px`,
+            transform: 'translateX(-100%)'
+          }}
+        >
+          {subjectGroups[openPopover.code].map((g, i) => (
+            <div key={i} className="groups-popover-item">
+              Gr {g.grup} ({g.tipus})
+            </div>
+          ))}
+        </div>
+      )}
     </>
   );
 }

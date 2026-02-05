@@ -40,11 +40,13 @@ export const ScheduleGrid: React.FC<Props> = ({ schedule, subjectColorMap }) => 
             <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'var(--grid-time-width) repeat(5, 1fr)',
-                gridTemplateRows: '50px repeat(14, 1fr)',
+                gridTemplateRows: '40px repeat(14, minmax(0, 1fr))',
                 width: '100%',
+                height: '100%',
                 flex: 1,
                 borderLeft: '1px solid var(--border-color)',
-                borderBottom: '1px solid var(--border-color)'
+                borderBottom: '1px solid var(--border-color)',
+                overflow: 'hidden'
             }}>
                 <div style={{ background: 'transparent', borderRight: '1px solid var(--border-color)', borderTop: '1px solid var(--border-color)' }} />
                 {DAYS.map(day => (
@@ -56,7 +58,7 @@ export const ScheduleGrid: React.FC<Props> = ({ schedule, subjectColorMap }) => 
                         fontWeight: '600',
                         color: 'var(--text-dim)',
                         background: 'transparent',
-                        fontSize: 'var(--grid-header-font)',
+                        fontSize: '0.75rem',
                         borderRight: '1px solid var(--border-color)',
                         borderTop: '1px solid var(--border-color)'
                     }}>
@@ -70,19 +72,22 @@ export const ScheduleGrid: React.FC<Props> = ({ schedule, subjectColorMap }) => 
                             style={{
                                 height: '100%',
                                 boxSizing: 'border-box',
-                                padding: '0.25rem 0.5rem',
+                                padding: '0 0.5rem',
                                 color: 'var(--text-dim)',
-                                fontSize: '0.75rem',
+                                fontSize: '0.7rem',
                                 textAlign: 'right',
                                 background: 'transparent',
                                 fontWeight: '500',
                                 borderRight: '1px solid var(--border-color)',
                                 borderTop: '1px solid var(--border-color)',
                                 gridRow: hourIdx + 2,
-                                gridColumn: 1
+                                gridColumn: 1,
+                                display: 'flex',
+                                alignItems: 'flex-start',
+                                justifyContent: 'flex-end'
                             }}
                         >
-                            {hour}:00
+                            <span style={{ marginTop: '0.2rem' }}>{hour}:00</span>
                         </div>
                         {DAYS.map((_, dayIndex) => (
                             <div key={dayIndex}
@@ -107,7 +112,7 @@ export const ScheduleGrid: React.FC<Props> = ({ schedule, subjectColorMap }) => 
 
                     if (daySessions.length === 0) return null;
 
-                    // Algorithm to calculate horizontal partitioning for overlaps
+                    // Algorithm for horizontal partitioning (same as before)
                     const clusters: HorariObj[][] = [];
                     daySessions.forEach((session: HorariObj) => {
                         let placed = false;
@@ -122,7 +127,6 @@ export const ScheduleGrid: React.FC<Props> = ({ schedule, subjectColorMap }) => 
                     });
 
                     return clusters.map(cluster => {
-                        // For each cluster, we need to find how many "columns" are needed
                         const columns: HorariObj[][] = [];
                         const sessionToCol = new Map<HorariObj, number>();
 
@@ -141,36 +145,44 @@ export const ScheduleGrid: React.FC<Props> = ({ schedule, subjectColorMap }) => 
 
                         const totalCols = columns.length;
 
-                        return cluster.map((session, idx) => {
+                        return cluster.map((session) => {
                             const rowStart = session.hours[0] - 8 + 2;
                             const colStart = dayIndex + 2;
                             const colIndex = sessionToCol.get(session) || 0;
                             const widthPct = 100 / totalCols;
                             const leftPct = colIndex * widthPct;
 
+                            // Unique stable key including start hour to avoid duplicates
+                            const uniqueKey = `${session.code}-${session.day}-${session.hours[0]}-${session.group}-${session.type}`;
+
                             return (
-                                <div key={`${dayIndex}-${idx}`} style={{
-                                    gridRow: `${rowStart} / span ${session.duration}`,
-                                    gridColumn: colStart,
-                                    margin: '2px',
-                                    marginLeft: `${leftPct}%`,
-                                    width: `calc(${widthPct}% - 4px)`,
-                                    background: getSubjectColor(session.code),
-                                    borderRadius: '6px',
-                                    padding: '0.6rem', // Slightly less padding for overlaps
-                                    zIndex: 10,
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    border: '1px solid rgba(255,255,255,0.1)',
-                                    color: 'white',
-                                    overflow: 'hidden',
-                                    position: 'relative',
-                                    boxSizing: 'border-box'
-                                }}>
-                                    <div style={{ fontWeight: '700', fontSize: '0.8rem', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{session.code}</div>
-                                    <div style={{ fontSize: '0.7rem', opacity: 0.9, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>Gr {session.group} ({session.type})</div>
-                                    <div style={{ fontSize: '0.6rem', opacity: 0.8, marginTop: 'auto', lineHeight: '1.2' }}>
-                                        Set: {formatWeeks(session.weeks)}
+                                <div
+                                    key={uniqueKey}
+                                    className="schedule-block animate-subject-fade"
+                                    style={{
+                                        gridRow: `${rowStart} / span ${session.duration}`,
+                                        gridColumn: colStart,
+                                        margin: '1px',
+                                        marginLeft: `${leftPct}%`,
+                                        width: `calc(${widthPct}% - 2px)`,
+                                        background: getSubjectColor(session.code),
+                                        borderRadius: '4px',
+                                        padding: '0.25rem 0.4rem',
+                                        zIndex: 10,
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        color: 'white',
+                                        overflow: 'hidden',
+                                        position: 'relative',
+                                        boxSizing: 'border-box',
+                                        minHeight: 0
+                                    }}
+                                >
+                                    <div style={{ fontWeight: '700', fontSize: '0.7rem', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{session.code}</div>
+                                    <div style={{ fontSize: '0.6rem', opacity: 0.9, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>Gr {session.group}</div>
+                                    <div style={{ fontSize: '0.55rem', opacity: 0.8, marginTop: 'auto', lineHeight: '1', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                                        {formatWeeks(session.weeks)}
                                     </div>
                                 </div>
                             );
