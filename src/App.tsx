@@ -7,11 +7,27 @@ import { ScheduleGrid } from './components/ScheduleGrid';
 
 import logo from './assets/eetac_logo.png';
 
+const COLORS = [
+  '#6366f1', '#8b5cf6', '#a855f7', '#d946ef', '#ec4899', '#f43f5e',
+  '#ef4444', '#f97316', '#f59e0b', '#eab308', '#84cc16', '#22c55e',
+  '#10b981', '#06b6d4', '#0ea5e9', '#3b82f6', '#475569'
+];
+
 function App() {
   const scheduler = useMemo(() => new Scheduler(data as any), []);
   const availableSubjects = useMemo(() => scheduler.getAvailableSubjects(), [scheduler]);
 
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
+
+  // Assign a unique color to each selected subject
+  const subjectColorMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    selectedSubjects.forEach((code, index) => {
+      map[code] = COLORS[index % COLORS.length];
+    });
+    return map;
+  }, [selectedSubjects]);
+
   const [preference, setPreference] = useState<SchedulePreference>(SchedulePreference.Morning);
   const [allowOverlapping, setAllowOverlapping] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -355,7 +371,10 @@ function App() {
             onTouchStart={onTouchStart}
             onTouchEnd={onTouchEnd}
           >
-            <ScheduleGrid schedule={currentSchedule || { sessions: [], score: 0 }} />
+            <ScheduleGrid
+              schedule={currentSchedule || { sessions: [], score: 0 }}
+              subjectColorMap={subjectColorMap}
+            />
           </div>
         </section>
       </main>

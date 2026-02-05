@@ -3,19 +3,15 @@ import type { Schedule, HorariObj } from '../engine/types';
 
 interface Props {
     schedule: Schedule;
+    subjectColorMap: Record<string, string>;
 }
 
 const DAYS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
 const HOURS = Array.from({ length: 14 }, (_, i) => i + 8); // 8:00 to 21:00
 
-const COLORS = [
-    '#6366f1', '#a855f7', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#f43f5e'
-];
-
-export const ScheduleGrid: React.FC<Props> = ({ schedule }) => {
+export const ScheduleGrid: React.FC<Props> = ({ schedule, subjectColorMap }) => {
     const getSubjectColor = (code: string) => {
-        const hash = code.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-        return COLORS[hash % COLORS.length];
+        return subjectColorMap[code] || '#64748b';
     };
 
     const formatWeeks = (weeks: number[]) => {
