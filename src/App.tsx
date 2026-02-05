@@ -244,6 +244,18 @@ function App() {
                         });
                       }}
                       onMouseLeave={() => setOpenPopover(null)}
+                      onClick={(e) => {
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        if (openPopover?.code === s) {
+                          setOpenPopover(null);
+                        } else {
+                          setOpenPopover({
+                            code: s,
+                            top: rect.top,
+                            left: rect.left
+                          });
+                        }
+                      }}
                     >
                       {subjectGroups[s]?.length || 0} {subjectGroups[s]?.length === 1 ? 'grupo' : 'grupos'}
                     </div>
@@ -327,7 +339,7 @@ function App() {
           </div>
         </aside>
 
-        <section className="schedule-section" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', flex: 1, minHeight: 0 }}>
+        <section className="schedule-section">
           <div className="panel nav-panel" style={{
             opacity: schedules.length > 0 || (selectedSubjects.length > 0 && !allowOverlapping) ? 1 : 0.3,
             pointerEvents: schedules.length > 0 ? 'auto' : 'none'
@@ -336,6 +348,27 @@ function App() {
               <span style={{ color: 'var(--text-dim)' }}>Horarios:</span>
               <strong style={{ color: 'var(--primary-color)', marginLeft: '0.4rem' }}>{schedules.length}</strong>
               <span className="swipe-hint" style={{ fontSize: '0.7rem', opacity: 0.5, marginLeft: '1rem' }}>Desliza para cambiar</span>
+              <span className="tap-hint" style={{ fontSize: '0.7rem', opacity: 0.5, marginLeft: '0.5rem' }}>• Pulsa un bloque para ampliar</span>
+              <div className="desktop-hint" style={{ marginLeft: '1.5rem' }}>
+                <span>Usa</span>
+                <span style={{
+                  background: 'var(--bg-color)',
+                  padding: '2px 6px',
+                  borderRadius: '4px',
+                  border: '1px solid var(--border-color)',
+                  fontWeight: '700',
+                  fontSize: '0.9rem'
+                }}>←</span>
+                <span style={{
+                  background: 'var(--bg-color)',
+                  padding: '2px 6px',
+                  borderRadius: '4px',
+                  border: '1px solid var(--border-color)',
+                  fontWeight: '700',
+                  fontSize: '0.9rem'
+                }}>→</span>
+                <span>del teclado para navegar</span>
+              </div>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -361,7 +394,7 @@ function App() {
             </div>
           </div>
           <div
-            style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}
+            style={{ flex: 1, minHeight: 0, height: '100%', display: 'flex', flexDirection: 'column' }}
             className={`grid-container ${(!currentSchedule || currentSchedule.hasOverlap || schedules.length === 0) && selectedSubjects.length > 0 ? 'warn-bg' : ''}`}
             onTouchStart={onTouchStart}
             onTouchEnd={onTouchEnd}

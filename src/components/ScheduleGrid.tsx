@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import type { Schedule, HorariObj } from '../engine/types';
 
 interface Props {
@@ -10,6 +11,10 @@ const DAYS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
 const HOURS = Array.from({ length: 14 }, (_, i) => i + 8); // 8:00 to 21:00
 
 export const ScheduleGrid: React.FC<Props> = ({ schedule, subjectColorMap }) => {
+    const [selectedSession, setSelectedSession] = useState<HorariObj | null>(null);
+    const [initialRect, setInitialRect] = useState<DOMRect | null>(null);
+    const [isExpanded, setIsExpanded] = useState(false);
+
     const getSubjectColor = (code: string) => {
         return subjectColorMap[code] || '#64748b';
     };
@@ -35,18 +40,22 @@ export const ScheduleGrid: React.FC<Props> = ({ schedule, subjectColorMap }) => 
         return ranges.join(', ');
     };
 
+    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+
     return (
-        <div className="panel" style={{ flex: 1, padding: '0', display: 'flex', border: 'none', background: 'transparent' }}>
+        <div className="panel" style={{ height: '100%', flex: 1, padding: '0', display: 'flex', border: 'none', background: 'transparent' }}>
             <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'var(--grid-time-width) repeat(5, 1fr)',
-                gridTemplateRows: '40px repeat(14, minmax(0, 1fr))',
+                gridTemplateRows: '40px repeat(14, var(--grid-row-height))',
                 width: '100%',
                 height: '100%',
+                minHeight: '100%',
                 flex: 1,
                 borderLeft: '1px solid var(--border-color)',
                 borderBottom: '1px solid var(--border-color)',
-                overflow: 'hidden'
+                overflowY: 'auto',
+                position: 'relative'
             }}>
                 <div style={{ background: 'transparent', borderRight: '1px solid var(--border-color)', borderTop: '1px solid var(--border-color)' }} />
                 {DAYS.map(day => (
@@ -152,8 +161,9 @@ export const ScheduleGrid: React.FC<Props> = ({ schedule, subjectColorMap }) => 
                             const widthPct = 100 / totalCols;
                             const leftPct = colIndex * widthPct;
 
-                            // Unique stable key including start hour to avoid duplicates
-                            const uniqueKey = `${session.code}-${session.day}-${session.hours[0]}-${session.group}-${session.type}`;
+                            // Unique stable key including start hour and weeks to avoid duplicates
+                            const uniqueKey = `${session.code}-${session.day}-${session.hours[0]}-${session.group}-${session.type}-${session.weeks.join(',')}`;
+                            const isNarrow = isMobile && totalCols > 2;
 
                             return (
                                 <div
@@ -167,7 +177,7 @@ export const ScheduleGrid: React.FC<Props> = ({ schedule, subjectColorMap }) => 
                                         width: `calc(${widthPct}% - 2px)`,
                                         background: getSubjectColor(session.code),
                                         borderRadius: '4px',
-                                        padding: '0.25rem 0.4rem',
+                                        padding: isNarrow ? '0.1rem 0.2rem' : (session.duration === 1 ? '0.15rem 0.3rem' : '0.25rem 0.4rem'),
                                         zIndex: 10,
                                         display: 'flex',
                                         flexDirection: 'column',
@@ -175,21 +185,173 @@ export const ScheduleGrid: React.FC<Props> = ({ schedule, subjectColorMap }) => 
                                         color: 'white',
                                         overflow: 'hidden',
                                         position: 'relative',
-                                        boxSizing: 'border-box',
-                                        minHeight: 0
+                                        minHeight: 0,
+                                        cursor: isMobile ? 'pointer' : 'default',
+                                        transition: 'transform 0.2s ease',
+                                        transform: selectedSession === session ? 'scale(0.95)' : 'none'
+                                    }}
+                                    onClick={(e) => {
+                                        if (isMobile) {
+                                            const rect = e.currentTarget.getBoundingClientRect();
+                                            setInitialRect(rect);
+                                            setSelectedSession(session);
+                                            setIsExpanded(false);
+                                            // Small delay to allow the proxy to mount at initial position
+                                            setTimeout(() => setIsExpanded(true), 10);
+                                        }
                                     }}
                                 >
-                                    <div style={{ fontWeight: '700', fontSize: '0.7rem', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{session.code}</div>
-                                    <div style={{ fontSize: '0.6rem', opacity: 0.9, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>Gr {session.group}</div>
-                                    <div style={{ fontSize: '0.55rem', opacity: 0.8, marginTop: 'auto', lineHeight: '1', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
-                                        {formatWeeks(session.weeks)}
+                                    <div style={{
+                                        display: 'flex',
+                                        flexWrap: 'wrap',
+                                        alignItems: 'baseline',
+                                        columnGap: '0.15rem',
+                                        rowGap: '0',
+                                        whiteSpace: 'nowrap',
+                                        overflow: 'hidden'
+                                    }}>
+                                        <span style={{
+                                            fontWeight: '700',
+                                            fontSize: isNarrow ? 'calc(var(--session-code-font) * 0.8)' : 'var(--session-code-font)',
+                                            flexShrink: 0,
+                                            minWidth: 0
+                                        }}>
+                                            {session.code}
+                                        </span>
+                                        <span style={{
+                                            fontSize: isNarrow ? 'calc(var(--session-group-font) * 0.85)' : 'var(--session-group-font)',
+                                            opacity: 0.9
+                                        }}>
+                                            {isNarrow ? 'G' : 'Gr'}{session.group}
+                                        </span>
                                     </div>
+                                    {(!isMobile || !isNarrow) && (
+                                        <div style={{
+                                            fontSize: 'var(--session-weeks-font)',
+                                            opacity: 0.8,
+                                            marginTop: 'auto',
+                                            lineHeight: '1',
+                                            whiteSpace: 'nowrap',
+                                            textOverflow: 'ellipsis',
+                                            overflow: 'hidden'
+                                        }}>
+                                            {formatWeeks(session.weeks)}
+                                        </div>
+                                    )}
                                 </div>
                             );
                         });
                     });
                 })}
             </div>
+            {isMobile && selectedSession && initialRect && createPortal(
+                <div
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background: isExpanded ? 'rgba(0,0,0,0.6)' : 'rgba(0,0,0,0)',
+                        backdropFilter: isExpanded ? 'blur(10px)' : 'none',
+                        zIndex: 10000,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                        cursor: 'pointer'
+                    }}
+                    onClick={() => {
+                        setIsExpanded(false);
+                        setTimeout(() => {
+                            setSelectedSession(null);
+                            setInitialRect(null);
+                        }, 300);
+                    }}
+                >
+                    <div
+                        style={{
+                            position: 'fixed',
+                            background: getSubjectColor(selectedSession.code),
+                            color: 'white',
+                            borderRadius: isExpanded ? '1.2rem' : '4px',
+                            boxShadow: isExpanded ? '0 25px 50px -12px rgba(0,0,0,0.5)' : 'none',
+                            border: '1px solid rgba(255,255,255,0.2)',
+                            padding: isExpanded ? '1.5rem' : '0.2rem 0.4rem',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '1rem',
+                            overflow: 'hidden',
+                            boxSizing: 'border-box',
+
+                            // Morphing properties
+                            top: isExpanded ? '50%' : `${initialRect.top}px`,
+                            left: isExpanded ? '50%' : `${initialRect.left}px`,
+                            width: isExpanded ? 'min(85vw, 340px)' : `${initialRect.width}px`,
+                            height: isExpanded ? 'auto' : `${initialRect.height}px`,
+                            transform: isExpanded ? 'translate(-50%, -50%)' : 'none',
+                            transformOrigin: 'top left',
+                            transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                            zIndex: 10001
+                        }}
+                        onClick={e => e.stopPropagation()}
+                    >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div style={{
+                                fontWeight: '800',
+                                fontSize: isExpanded ? '1.5rem' : 'var(--session-code-font)',
+                                transition: 'font-size 0.3s ease'
+                            }}>
+                                {selectedSession.code}
+                            </div>
+                        </div>
+
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '0.8rem',
+                            opacity: isExpanded ? 1 : 0,
+                            transform: isExpanded ? 'translateY(0)' : 'translateY(20px)',
+                            transition: 'all 0.3s ease 0.1s',
+                            pointerEvents: isExpanded ? 'auto' : 'none',
+                            height: isExpanded ? 'auto' : '0',
+                            overflow: 'hidden'
+                        }}>
+                            <div style={{ fontSize: '1.2rem', fontWeight: '600' }}>Grupo {selectedSession.group}</div>
+                            <div style={{ fontSize: '1rem', opacity: 0.9 }}>
+                                {selectedSession.type === 'T' ? 'Clase de Teoría' : 'Sesión de Práctica'}
+                            </div>
+
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.75rem',
+                                    padding: '0.75rem',
+                                    background: 'rgba(0,0,0,0.15)',
+                                    borderRadius: '0.75rem',
+                                }}>
+                                    <span style={{ fontSize: '0.8rem', opacity: 0.7, textTransform: 'uppercase', fontWeight: '700' }}>Horario</span>
+                                    <span style={{ fontWeight: '500' }}>{selectedSession.hours[0]}:00 - {selectedSession.hours[selectedSession.hours.length - 1] + 1}:00</span>
+                                </div>
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.75rem',
+                                    padding: '0.75rem',
+                                    background: 'rgba(0,0,0,0.15)',
+                                    borderRadius: '0.75rem',
+                                }}>
+                                    <span style={{ fontSize: '0.8rem', opacity: 0.7, textTransform: 'uppercase', fontWeight: '700' }}>Semanas</span>
+                                    <span style={{ fontWeight: '500' }}>{formatWeeks(selectedSession.weeks)}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>,
+                document.body
+            )}
         </div>
     );
 };
